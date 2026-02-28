@@ -185,58 +185,114 @@
             margin-top: 60px;
             display: flex;
             justify-content: center;
+            gap: 32px;
+            align-items: flex-start;
+            flex-wrap: wrap;
         }
         .phone-mockup {
-            width: 280px;
-            height: 560px;
+            width: 260px;
             background: var(--gray-900);
-            border-radius: 40px;
-            padding: 12px;
+            border-radius: 36px;
+            padding: 10px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.2);
             position: relative;
+            transition: transform 0.3s ease;
+        }
+        .phone-mockup:hover {
+            transform: translateY(-8px);
+        }
+        .phone-mockup.center-phone {
+            transform: scale(1.05);
+            z-index: 2;
+        }
+        .phone-mockup.center-phone:hover {
+            transform: scale(1.05) translateY(-8px);
         }
         .phone-screen {
             width: 100%;
-            height: 100%;
-            background: linear-gradient(180deg, var(--green-600) 0%, var(--green-800) 50%, var(--green-900) 100%);
-            border-radius: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            padding: 24px;
+            border-radius: 28px;
+            overflow: hidden;
+            position: relative;
+            background: #1a3a1a;
+        }
+        .phone-screen img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .phone-label {
             text-align: center;
+            margin-top: 14px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-500);
+        }
+
+        /* ===== APP PREVIEW SECTION ===== */
+        #app-preview {
+            background: linear-gradient(180deg, #0a1f0a 0%, #122812 50%, #0a1f0a 100%);
             overflow: hidden;
             position: relative;
         }
-        .phone-screen::before {
+        #app-preview::before {
             content: '';
             position: absolute;
-            top: -30%; left: -30%;
-            width: 160%;
-            height: 80%;
-            background: radial-gradient(ellipse, rgba(255,255,255,0.08) 0%, transparent 70%);
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 30% 40%, rgba(34,197,94,0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 60%, rgba(74,222,128,0.06) 0%, transparent 50%);
+            pointer-events: none;
         }
-        .phone-icon { font-size: 4rem; margin-bottom: 16px; position: relative; }
-        .phone-title { font-size: 1.5rem; font-weight: 700; position: relative; }
-        .phone-subtitle { font-size: 0.9rem; opacity: 0.85; margin-top: 8px; position: relative; }
-        .phone-features {
-            margin-top: 32px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        #app-preview .section-header h2 { color: #fff; }
+        #app-preview .section-header p { color: rgba(255,255,255,0.6); }
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            max-width: 900px;
+            margin: 0 auto;
             position: relative;
-            width: 100%;
         }
-        .phone-feature {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(255,255,255,0.12);
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 0.85rem;
+        .preview-item {
+            text-align: center;
+        }
+        .preview-phone {
+            background: #1a1a2e;
+            border-radius: 36px;
+            padding: 10px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08);
+            transition: transform 0.3s ease;
+        }
+        .preview-phone:hover {
+            transform: translateY(-6px) scale(1.02);
+        }
+        .preview-phone-screen {
+            border-radius: 28px;
+            overflow: hidden;
+            background: #1a3a1a;
+        }
+        .preview-phone-screen img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .preview-label {
+            margin-top: 20px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.85);
+            font-size: 1rem;
+        }
+        .preview-desc {
+            margin-top: 6px;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .preview-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+                max-width: 300px;
+            }
         }
 
         /* ===== SECTIONS ===== */
@@ -477,7 +533,8 @@
             .hero h1 { font-size: 1.85rem; }
             .hero-buttons { flex-direction: column; align-items: center; }
             .btn { width: 100%; justify-content: center; max-width: 300px; }
-            .phone-mockup { width: 240px; height: 480px; }
+            .phone-mockup { width: 200px; }
+            .phone-showcase { gap: 12px; }
         }
 
         /* ===== ANIMATIONS ===== */
@@ -501,6 +558,7 @@
                 <span>🌿</span> PlantDoctor
             </a>
             <div class="nav-links">
+                <a href="#app-preview">Screenshots</a>
                 <a href="#features">Features</a>
                 <a href="#how-it-works">How It Works</a>
                 <a href="#diseases">Diseases</a>
@@ -539,15 +597,61 @@
             <div class="phone-showcase fade-in">
                 <div class="phone-mockup">
                     <div class="phone-screen">
-                        <div class="phone-icon">🌱</div>
-                        <div class="phone-title">PlantDoctor</div>
-                        <div class="phone-subtitle">AI Plant Disease Detection</div>
-                        <div class="phone-features">
-                            <div class="phone-feature">📸 Scan leaf with camera</div>
-                            <div class="phone-feature">🧠 AI-powered analysis</div>
-                            <div class="phone-feature">💊 Treatment advice</div>
+                        <img src="screenshots/home.png" alt="PlantDoctor Home Screen - Welcome page with How to Use guide">
+                    </div>
+                    <div class="phone-label">Home Screen</div>
+                </div>
+                <div class="phone-mockup center-phone">
+                    <div class="phone-screen">
+                        <img src="screenshots/result-diagnosis.png" alt="PlantDoctor Analysis Result - Disease detection with Early Blight diagnosis">
+                    </div>
+                    <div class="phone-label">Disease Detection</div>
+                </div>
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <img src="screenshots/result-details.png" alt="PlantDoctor Treatment Details - Guidance, irrigation and fertilization tips">
+                    </div>
+                    <div class="phone-label">Treatment Details</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- APP PREVIEW -->
+    <section id="app-preview">
+        <div class="section-inner">
+            <div class="section-header fade-in">
+                <h2>See It In Action</h2>
+                <p>Real screenshots from the PlantDoctor app</p>
+            </div>
+
+            <div class="preview-grid">
+                <div class="preview-item fade-in">
+                    <div class="preview-phone">
+                        <div class="preview-phone-screen">
+                            <img src="screenshots/home.png" alt="PlantDoctor Home Screen">
                         </div>
                     </div>
+                    <div class="preview-label">Home Screen</div>
+                    <div class="preview-desc">Welcome guide &amp; scan button</div>
+                </div>
+                <div class="preview-item fade-in">
+                    <div class="preview-phone">
+                        <div class="preview-phone-screen">
+                            <img src="screenshots/result-diagnosis.png" alt="Disease Detection Result">
+                        </div>
+                    </div>
+                    <div class="preview-label">AI Diagnosis</div>
+                    <div class="preview-desc">Disease name &amp; treatment info</div>
+                </div>
+                <div class="preview-item fade-in">
+                    <div class="preview-phone">
+                        <div class="preview-phone-screen">
+                            <img src="screenshots/result-details.png" alt="Treatment Details">
+                        </div>
+                    </div>
+                    <div class="preview-label">Care Details</div>
+                    <div class="preview-desc">Guidance, irrigation &amp; fertilization</div>
                 </div>
             </div>
         </div>
