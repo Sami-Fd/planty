@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlantDoctor - AI Plant Disease Detection</title>
+    <meta name="description" content="Detect plant diseases instantly using AI. Free Android app powered by TensorFlow Lite for on-device plant leaf analysis.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-50: #f0fdf4;
+            --green-100: #dcfce7;
+            --green-200: #bbf7d0;
+            --green-400: #4ade80;
+            --green-500: #22c55e;
+            --green-600: #16a34a;
+            --green-700: #15803d;
+            --green-800: #166534;
+            --green-900: #14532d;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--gray-800);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background: #fff;
+        }
+
+        /* ===== NAVBAR ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--gray-200);
+            transition: box-shadow 0.3s;
+        }
+        nav.scrolled {
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--green-700);
+            text-decoration: none;
+        }
+        .nav-brand span { font-size: 1.5rem; }
+        .nav-links { display: flex; gap: 32px; align-items: center; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--green-600); }
+
+        /* ===== HERO ===== */
+        .hero {
+            padding: 140px 24px 80px;
+            text-align: center;
+            background: linear-gradient(180deg, var(--green-50) 0%, #fff 100%);
+            position: relative;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(74,222,128,0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 30%, rgba(34,197,94,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--green-100);
+            color: var(--green-700);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--gray-900);
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--green-500), var(--green-700));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--gray-600);
+            max-width: 600px;
+            margin: 0 auto 36px;
+            line-height: 1.7;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--green-500), var(--green-600));
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(34,197,94,0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34,197,94,0.45);
+        }
+        .btn-secondary {
+            background: #fff;
+            color: var(--gray-700);
+            border: 2px solid var(--gray-200);
+        }
+        .btn-secondary:hover {
+            border-color: var(--green-400);
+            color: var(--green-700);
+            transform: translateY(-2px);
+        }
+        .btn svg { width: 20px; height: 20px; }
+
+        /* ===== PHONE MOCKUP ===== */
+        .phone-showcase {
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+        }
+        .phone-mockup {
+            width: 280px;
+            height: 560px;
+            background: var(--gray-900);
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, var(--green-600) 0%, var(--green-800) 50%, var(--green-900) 100%);
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            padding: 24px;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .phone-screen::before {
+            content: '';
+            position: absolute;
+            top: -30%; left: -30%;
+            width: 160%;
+            height: 80%;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.08) 0%, transparent 70%);
+        }
+        .phone-icon { font-size: 4rem; margin-bottom: 16px; position: relative; }
+        .phone-title { font-size: 1.5rem; font-weight: 700; position: relative; }
+        .phone-subtitle { font-size: 0.9rem; opacity: 0.85; margin-top: 8px; position: relative; }
+        .phone-features {
+            margin-top: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            width: 100%;
+        }
+        .phone-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.12);
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+
+        /* ===== SECTIONS ===== */
+        section {
+            padding: 100px 24px;
+        }
+        .section-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 16px;
+            letter-spacing: -0.01em;
+        }
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--gray-500);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ===== FEATURES ===== */
+        #features { background: var(--gray-50); }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        .feature-card {
+            background: #fff;
+            padding: 32px;
+            border-radius: 20px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+            border-color: var(--green-200);
+        }
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .feature-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--gray-900);
+        }
+        .feature-card p {
+            color: var(--gray-500);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* ===== HOW IT WORKS ===== */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            position: relative;
+        }
+        .steps-grid::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: calc(16.67% + 20px);
+            right: calc(16.67% + 20px);
+            height: 3px;
+            background: linear-gradient(90deg, var(--green-400), var(--green-500), var(--green-600));
+            border-radius: 2px;
+        }
+        .step {
+            text-align: center;
+            position: relative;
+        }
+        .step-number {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green-500), var(--green-600));
+            color: #fff;
+            font-size: 1.75rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 8px 24px rgba(34,197,94,0.3);
+        }
+        .step h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--gray-900);
+        }
+        .step p {
+            color: var(--gray-500);
+            font-size: 0.95rem;
+        }
+
+        /* ===== DISEASES ===== */
+        #diseases { background: var(--gray-50); }
+        .diseases-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .disease-tag {
+            background: #fff;
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .disease-tag:hover {
+            border-color: var(--green-400);
+            background: var(--green-50);
+        }
+        .disease-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green-500);
+            flex-shrink: 0;
+        }
+
+        /* ===== DOWNLOAD ===== */
+        #download {
+            background: linear-gradient(135deg, var(--green-700), var(--green-900));
+            color: #fff;
+            text-align: center;
+        }
+        #download .section-header h2 { color: #fff; }
+        #download .section-header p { color: rgba(255,255,255,0.75); }
+        .download-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .download-size {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            margin-top: 16px;
+        }
+        .download-info {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+        .download-stat {
+            text-align: center;
+        }
+        .download-stat .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .download-stat .label {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+        .btn-download {
+            background: #fff;
+            color: var(--green-700);
+            font-weight: 700;
+            padding: 16px 36px;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(0,0,0,0.3);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            padding: 40px 24px;
+            text-align: center;
+            border-top: 1px solid var(--gray-200);
+        }
+        footer p {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: var(--green-600);
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.25rem; }
+            .hero p { font-size: 1rem; }
+            .features-grid, .steps-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            .steps-grid::before { display: none; }
+            .nav-links { display: none; }
+            .download-card { padding: 32px 24px; }
+            .download-info { gap: 24px; }
+            section { padding: 60px 24px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero { padding: 120px 16px 60px; }
+            .hero h1 { font-size: 1.85rem; }
+            .hero-buttons { flex-direction: column; align-items: center; }
+            .btn { width: 100%; justify-content: center; max-width: 300px; }
+            .phone-mockup { width: 240px; height: 480px; }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav id="navbar">
+        <div class="nav-inner">
+            <a href="#" class="nav-brand">
+                <span>🌿</span> PlantDoctor
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#diseases">Diseases</a>
+                <a href="#download" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">Download</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">🤖 Powered by AI &mdash; 100% Free</div>
+
+            <h1>
+                Detect Plant Diseases<br>
+                <span class="highlight">Instantly with AI</span>
+            </h1>
+
+            <p>
+                Point your camera at any plant leaf and get an instant diagnosis. 
+                PlantDoctor uses on-device machine learning to identify 38 plant conditions 
+                — no internet required.
+            </p>
+
+            <div class="hero-buttons">
+                <a href="#download" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download APK
+                </a>
+                <a href="https://github.com/sami-dev/planty" target="_blank" class="btn btn-secondary">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    View on GitHub
+                </a>
+            </div>
+
+            <div class="phone-showcase fade-in">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="phone-icon">🌱</div>
+                        <div class="phone-title">PlantDoctor</div>
+                        <div class="phone-subtitle">AI Plant Disease Detection</div>
+                        <div class="phone-features">
+                            <div class="phone-feature">📸 Scan leaf with camera</div>
+                            <div class="phone-feature">🧠 AI-powered analysis</div>
+                            <div class="phone-feature">💊 Treatment advice</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features">
+        <div class="section-inner">
+            <div class="section-header fade-in">
+                <h2>Powerful Features</h2>
+                <p>Everything you need to keep your plants healthy and thriving</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon" style="background: #ecfdf5; color: var(--green-600);">🧠</div>
+                    <h3>AI-Powered Detection</h3>
+                    <p>Uses a MobileNetV2 model trained on thousands of plant images for accurate disease identification across 38 categories.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon" style="background: #f0f9ff; color: #2563eb;">📱</div>
+                    <h3>On-Device Processing</h3>
+                    <p>All analysis happens directly on your phone using TensorFlow Lite. No internet connection needed — your data stays private.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon" style="background: #fef3c7; color: #d97706;">⚡</div>
+                    <h3>Instant Results</h3>
+                    <p>Get diagnosis results in seconds with confidence scores, disease information, and actionable treatment recommendations.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon" style="background: #fce7f3; color: #db2777;">📸</div>
+                    <h3>Camera &amp; Gallery</h3>
+                    <p>Capture a new photo with your camera or pick an existing image from your gallery for analysis.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon" style="background: #ede9fe; color: #7c3aed;">💊</div>
+                    <h3>Treatment Guidance</h3>
+                    <p>Receive detailed treatment plans, irrigation tips, fertilization advice, and care guidance for each detected disease.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon" style="background: #fff7ed; color: #ea580c;">🌿</div>
+                    <h3>14 Plant Species</h3>
+                    <p>Supports tomato, potato, grape, apple, corn, pepper, cherry, peach, strawberry, orange, soybean, squash, and more.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how-it-works">
+        <div class="section-inner">
+            <div class="section-header fade-in">
+                <h2>How It Works</h2>
+                <p>Three simple steps to diagnose your plant</p>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step fade-in">
+                    <div class="step-number">1</div>
+                    <h3>Capture a Leaf</h3>
+                    <p>Take a clear photo of the affected plant leaf using your camera, or select one from your gallery.</p>
+                </div>
+                <div class="step fade-in">
+                    <div class="step-number">2</div>
+                    <h3>AI Analysis</h3>
+                    <p>The on-device MobileNetV2 model processes the image and identifies disease patterns in seconds.</p>
+                </div>
+                <div class="step fade-in">
+                    <div class="step-number">3</div>
+                    <h3>Get Results</h3>
+                    <p>View the diagnosis with confidence score, disease details, treatment plans, and care recommendations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DISEASES -->
+    <section id="diseases">
+        <div class="section-inner">
+            <div class="section-header fade-in">
+                <h2>Diseases We Detect</h2>
+                <p>Our AI model can identify 38 different plant conditions across 14 species</p>
+            </div>
+
+            <div class="diseases-list fade-in">
+                <div class="disease-tag"><span class="disease-dot"></span> Apple Scab</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Apple Black Rot</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Apple Cedar Rust</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Cherry Powdery Mildew</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Corn Cercospora Leaf Spot</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Corn Common Rust</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Corn Northern Leaf Blight</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Grape Black Rot</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Grape Esca (Black Measles)</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Grape Leaf Blight</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Orange Citrus Greening</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Peach Bacterial Spot</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Pepper Bacterial Spot</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Potato Early Blight</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Potato Late Blight</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Squash Powdery Mildew</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Strawberry Leaf Scorch</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Tomato Bacterial Spot</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Tomato Early Blight</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Tomato Late Blight</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Tomato Leaf Mold</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Tomato Septoria Leaf Spot</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Tomato Spider Mites</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Tomato Target Spot</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Tomato Yellow Leaf Curl</div>
+                <div class="disease-tag"><span class="disease-dot"></span> Tomato Mosaic Virus</div>
+                <div class="disease-tag"><span class="disease-dot" style="background: var(--green-400);"></span> + Healthy Detection</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DOWNLOAD -->
+    <section id="download">
+        <div class="section-inner">
+            <div class="section-header fade-in">
+                <h2>Download PlantDoctor</h2>
+                <p>Free and open source. No ads, no tracking, no internet required.</p>
+            </div>
+
+            <div class="download-card fade-in">
+                <a href="https://github.com/sami-dev/planty/releases/latest/download/app-release.apk" class="btn btn-download">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download APK for Android
+                </a>
+                <p class="download-size">Android 5.0+ &bull; ~82 MB &bull; v1.0.0</p>
+
+                <div class="download-info">
+                    <div class="download-stat">
+                        <div class="value">38</div>
+                        <div class="label">Conditions Detected</div>
+                    </div>
+                    <div class="download-stat">
+                        <div class="value">14</div>
+                        <div class="label">Plant Species</div>
+                    </div>
+                    <div class="download-stat">
+                        <div class="value">0</div>
+                        <div class="label">Ads</div>
+                    </div>
+                    <div class="download-stat">
+                        <div class="value">100%</div>
+                        <div class="label">Offline</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>
+            &copy; 2026 PlantDoctor &mdash; Built with Flutter &amp; TensorFlow Lite<br>
+            <a href="https://github.com/sami-dev/planty" target="_blank">Open source on GitHub</a>
+        </p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Navbar scroll effect
+        const nav = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 10);
+        });
+
+        // Scroll reveal animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

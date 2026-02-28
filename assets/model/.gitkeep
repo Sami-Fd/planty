@@ -1,0 +1,8 @@
+# This is a placeholder file.
+# Replace this with your actual plant_disease_model.tflite file.
+# 
+# The model should have:
+# - Input shape: [1, 224, 224, 3]
+# - Output shape: [1, 38]
+# 
+# See README.md for more details.

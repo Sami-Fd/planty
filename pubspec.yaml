@@ -1,0 +1,63 @@
+name: planty
+description: "PlantDoctor - AI-powered plant disease detection app"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI Icons
+  cupertino_icons: ^1.0.8
+  
+  # State Management - Provider for app-wide state
+  provider: ^6.1.2
+  
+  # Camera access for live preview and capture
+  camera: ^0.11.0+2
+  
+  # Image picker for gallery access (alternative to camera)
+  image_picker: ^1.1.2
+  
+  # TensorFlow Lite for ML inference
+  tflite_flutter: ^0.11.0
+  
+  # Image processing utilities (for preprocessing before inference)
+  image: ^4.3.0
+  
+  # Path utilities for file operations
+  path_provider: ^2.1.5
+  path: ^1.9.0
+  
+  # Permission handling
+  permission_handler: ^11.3.1
+  
+  # URL launcher for opening external links
+  url_launcher: ^6.2.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
+
+# App icon configuration
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  adaptive_icon_background: "#4CAF50"
+  adaptive_icon_foreground: "assets/images/app_icon_foreground.png"
+
+flutter:
+  uses-material-design: true
+  
+  # Assets configuration for model and data files
+  assets:
+    - assets/model/
+    - assets/data/
+    - assets/images/
+
