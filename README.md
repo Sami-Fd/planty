@@ -21,28 +21,28 @@ Point your camera at any plant leaf and get an instant diagnosis — no internet
 
 ## 📱 Screenshots
 
-| Home | Scan | Results |
-|------|------|---------|
+| Home                             | Scan                            | Results                               |
+| -------------------------------- | ------------------------------- | ------------------------------------- |
 | Welcome screen with instructions | Camera capture & gallery picker | Disease diagnosis with treatment info |
 
 ## 🌱 Supported Plants & Diseases
 
 The model detects **38 conditions** across these plant species:
 
-| Plant | Diseases |
-|-------|----------|
-| Apple | Scab, Black Rot, Cedar Rust, Healthy |
-| Cherry | Powdery Mildew, Healthy |
-| Corn | Cercospora Leaf Spot, Common Rust, Northern Leaf Blight, Healthy |
-| Grape | Black Rot, Esca, Leaf Blight, Healthy |
-| Orange | Citrus Greening |
-| Peach | Bacterial Spot, Healthy |
-| Pepper | Bacterial Spot, Healthy |
-| Potato | Early Blight, Late Blight, Healthy |
-| Soybean | Healthy |
-| Squash | Powdery Mildew |
-| Strawberry | Leaf Scorch, Healthy |
-| Tomato | Bacterial Spot, Early Blight, Late Blight, Leaf Mold, Septoria Leaf Spot, Spider Mites, Target Spot, Yellow Leaf Curl, Mosaic Virus, Healthy |
+| Plant      | Diseases                                                                                                                                     |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Apple      | Scab, Black Rot, Cedar Rust, Healthy                                                                                                         |
+| Cherry     | Powdery Mildew, Healthy                                                                                                                      |
+| Corn       | Cercospora Leaf Spot, Common Rust, Northern Leaf Blight, Healthy                                                                             |
+| Grape      | Black Rot, Esca, Leaf Blight, Healthy                                                                                                        |
+| Orange     | Citrus Greening                                                                                                                              |
+| Peach      | Bacterial Spot, Healthy                                                                                                                      |
+| Pepper     | Bacterial Spot, Healthy                                                                                                                      |
+| Potato     | Early Blight, Late Blight, Healthy                                                                                                           |
+| Soybean    | Healthy                                                                                                                                      |
+| Squash     | Powdery Mildew                                                                                                                               |
+| Strawberry | Leaf Scorch, Healthy                                                                                                                         |
+| Tomato     | Bacterial Spot, Early Blight, Late Blight, Leaf Mold, Septoria Leaf Spot, Spider Mites, Target Spot, Yellow Leaf Curl, Mosaic Virus, Healthy |
 
 ## 🏗️ Architecture
 
@@ -68,6 +68,7 @@ lib/
 ```
 
 **Key Technologies:**
+
 - **Flutter** — Cross-platform UI framework
 - **Provider** — State management
 - **TensorFlow Lite** — On-device ML inference
